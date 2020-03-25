@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "business/AudioMessage.proto";
+import "business/FileMessage.proto";
+import "business/VideoMessage.proto";
+import "business/WordMessage.proto";
+
+message TopLevelData {
+    enum Type {
+        WORD = 0;
+        AUDIO = 1;
+        VIDEO = 2;
+        FILE = 3;
+    }
+    oneof message {
+        WordMessage wordMessage = 4;
+        VideoMessage videoMessage = 5;
+        AudioMessage audioMessage = 6;
+        FileMessage fileMessage = 7;
+    }
+
+    Type type = 1;
+    fixed64 sendTime = 2;
+}
