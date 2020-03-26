@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package business;
+option java_package = "com.chat.proto.business";
 
 message VideoMessage {
     string fileName = 1;

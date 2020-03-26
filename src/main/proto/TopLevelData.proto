@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option java_package = "com.chat.proto";
+
 import "business/AudioMessage.proto";
 import "business/FileMessage.proto";
 import "business/VideoMessage.proto";
@@ -7,18 +9,21 @@ import "business/WordMessage.proto";
 
 message TopLevelData {
     enum Type {
-        WORD = 0;
-        AUDIO = 1;
-        VIDEO = 2;
-        FILE = 3;
+        PING = 0;
+        PONG = 1;
+        WORD = 2;
+        AUDIO = 3;
+        VIDEO = 4;
+        FILE = 5;
     }
     oneof message {
-        WordMessage wordMessage = 4;
-        VideoMessage videoMessage = 5;
-        AudioMessage audioMessage = 6;
-        FileMessage fileMessage = 7;
+        business.WordMessage wordMessage = 4;
+        business.VideoMessage videoMessage = 5;
+        business.AudioMessage audioMessage = 6;
+        business.FileMessage fileMessage = 7;
     }
 
     Type type = 1;
     fixed64 sendTime = 2;
+
 }
