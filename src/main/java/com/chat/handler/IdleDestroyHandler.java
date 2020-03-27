@@ -17,29 +17,31 @@ public class IdleDestroyHandler extends SimpleChannelInboundHandler<TopLevelData
 
     public IdleDestroyHandler() {}
 
+    @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TopLevelDataOuterClass.TopLevelData topLevelData) throws Exception {
         lossPingTimes = 0;
         if (topLevelData.getType().equals(TopLevelDataOuterClass.TopLevelData.Type.PING)) {
-            TopLevelDataOuterClass.TopLevelData pingMessage = TopLevelDataOuterClass.TopLevelData.newBuilder()
+            System.out.println("receive ping");
+            TopLevelDataOuterClass.TopLevelData pongMessage = TopLevelDataOuterClass.TopLevelData.newBuilder()
                     .setType(TopLevelDataOuterClass.TopLevelData.Type.PONG)
                     .setSendTime(System.nanoTime())
                     .build();
-            channelHandlerContext.writeAndFlush(pingMessage);
+            channelHandlerContext.channel().writeAndFlush(pongMessage);
+            System.out.println("response pong");
         } else {
             channelHandlerContext.fireChannelRead(topLevelData);
         }
     }
 
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        System.out.println(evt);
         if (evt instanceof IdleStateEvent) {
-            System.out.println("链路空闲通知: " + lossPingTimes);
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             if (idleStateEvent.state() == IdleState.READER_IDLE) {
                 lossPingTimes++;
                 if (lossPingTimes > maxLossPingTimes) {
-                    System.out.println("因空闲多次，服务端主动关闭链接");
+                    System.out.println("close for long time read idle");
                     ctx.channel().close();
                 }
             }
